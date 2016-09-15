@@ -1,3 +1,26 @@
+<?php
+	if(!empty($_GET['submit'])){
+		$col = isset($_GET['col']) ? $_GET['col'] : 6;
+		$num = isset($_GET['num']) ? $_GET['num'] : 6;
+		$min = isset($_GET['min']) ? $_GET['min'] : 1;
+		$max = isset($_GET['max']) ? $_GET['max'] : 45;
+		$error = '';
+		if( !is_numeric($col) || !is_numeric($num) || !is_numeric($min) || !is_numeric($max) ){
+			$error = "Nhập sai số";
+		} else if( $max <= $min ){
+			$error = 'Vingf chọn không có giá trị';
+		} else if($num > ($max-$min+1)){
+			$error = 'Số bạn nhập nằm ngoài vùng chọn';
+		}
+
+		if( empty($error) ){
+			$range = range($min, $max);
+			shuffle($range);
+			$result = array_slice($range, 0,$num);
+			$random_result = array_chunk($result, $col);	
+		}
+} 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,21 +52,16 @@
 
 	<h3>Phần 1: Chọn số</h3>
 
-	<p>Tạo <input type="number" name="num" value="6" size="6"
+	<p>Tạo <input type="number" name="num" value="<?php echo $num ?>" size="6"
 	maxlength="2" /> cặp số ngẫu nhiên (tối đa 45).</p>
 
 	<p>Mỗi số phải có giá trị từ <input type="number"
-	name="min" value="1" size="6" maxlength="12" /> đến <input
-	type="number" name="max" value="45" size="6" maxlength="12" />
+	name="min" value="<?php echo $min ?>" size="6" maxlength="12" /> đến <input
+	type="number" name="max" value="<?php echo $max?>" size="6" maxlength="12" />
 	</p>
 
 	<p>Định dạng thành <input type="number"
-	name="col" value="6" size="2" maxlength="6" /> cột.</p>
-
-	<input type="hidden" name="base" value="10" />
-	<input type="hidden" name="format" value="html" />
-	<input type="hidden" name="rnd" value="new" />
-	<input type="hidden" name="submit" value="1">
+	name="col" value="<?php echo $col ?>" size="2" maxlength="6" /> cột.</p>
 
 	<h3>Phần 2: Bắt đầu!</h3>
 
@@ -54,27 +72,7 @@
 
 	</form>
 
-	<?php if(!empty($_GET['submit'])): 
-		$col = isset($_GET['col']) ? $_GET['col'] : 5;
-		$num = isset($_GET['num']) ? $_GET['num'] : 100;
-		$min = isset($_GET['min']) ? $_GET['min'] : 1;
-		$max = isset($_GET['max']) ? $_GET['max'] : 1000;
-		$error = '';
-		if( !is_numeric($col) || !is_numeric($num) || !is_numeric($min) || !is_numeric($max) ){
-			$error = "Nhập sai số";
-		} else if( $max <= $min ){
-			$error = 'Vingf chọn không có giá trị';
-		} else if($num > ($max-$min+1)){
-			$error = 'Số bạn nhập nằm ngoài vùng chọn';
-		}
-
-		if( empty($error) ){
-			$range = range($min, $max);
-			shuffle($range);
-			$result = array_slice($range, 0,$num);
-			$random_result = array_chunk($result, $col);	
-		}
-	?>
+	
 	<div id="data">
 		<?php if(!empty($error)):?>
 		<p><?php echo $error?></p>
@@ -86,12 +84,6 @@
 			<?php endforeach?>
 		</pre>
 		<?php endif?>
-	</div>
-
-		
-	
-	<?php endif?>	
-	
-	
+	</div>	
 </body>
 </html>
